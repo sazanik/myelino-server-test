@@ -1,0 +1,32 @@
+#PLANS
+
+### get plan
+GET {{base-url}}/plans/13?test=333
+
+### create plan
+POST {{base-url}}/plans
+Content-Type: application/json
+
+{
+  "userId": "userId",
+  "name": "Cafes and restaurants5"
+}
+
+### delete plan
+DELETE {{base-url}}/plans/4
+
+
+#EVENTS
+
+### create event
+POST {{base-url}}/plans/2/events
+Content-Type: application/json
+
+{
+  "userId": "userId",
+  "name": "Event {{$random.integer(1, 999)}}",
+  "dtStart": 1734993924602,
+  "dtEnd": 1735166724608,
+  "invitedPersonsCount": {{$random.integer(1, 99)}},
+  "cost": {{$randomInt}}
+}
