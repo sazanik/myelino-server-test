@@ -9,6 +9,7 @@ Content-Type: application/json
   "email": "test{{$random.integer(1, 9)}}@gmail.com",
   "password": "password"
 }
+
 ### get user
 GET {{base-url}}/users/{{userId}}
 
@@ -38,6 +39,7 @@ Content-Type: application/json
 
 ###
 #PLANS
+###
 
 ### get plans
 GET {{base-url}}/plans?userId={{userId}}

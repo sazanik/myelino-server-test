@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "userId": "1",
+    "name": "Created plan 35",
+    "id": "1"
+  },
+  {
+    "userId": "1",
+    "name": "Created plan 50",
+    "id": "2"
+  }
+]

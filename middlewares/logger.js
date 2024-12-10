@@ -3,10 +3,9 @@
  *
  * @returns {undefined}
  */
-
-function log() {
-  return console.log(new Date(), ...arguments)
-}
+const log =  (...params) => {
+  return console.log(new Date(), ...params)
+};
 
 module.exports = async function logger(ctx, next) {
   const start = Date.now();
@@ -15,6 +14,6 @@ module.exports = async function logger(ctx, next) {
     await next();
   } finally {
     const duration = Date.now() - start;
-    log({ method: ctx.method, url: ctx.url, body: ctx.body ?? null, duration })
+    log({ method: ctx.method, url: ctx.url, body: ctx.body ?? null, headers: ctx.headers, duration })
   }
 }

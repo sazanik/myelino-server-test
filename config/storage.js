@@ -10,6 +10,7 @@ const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
 const ensureDataDir = async () => {
   try {
     await fs.access(DATA_DIR);
+    await fs.access(IMAGES_DIR);
   } catch {
     await fs.mkdir(DATA_DIR, { recursive: true });
     await fs.mkdir(IMAGES_DIR, { recursive: true });
