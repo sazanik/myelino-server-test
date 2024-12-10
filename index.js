@@ -5,11 +5,11 @@ const usersRouter = require('./router/users');
 const authRouter = require('./router/auth');
 const plansRouter = require('./router/plans');
 const eventsRouter = require('./router/events');
-const logger = require('./middlewares/logger');
+const loggerMiddleware = require('./middlewares/logger');
 
 const app = new Koa();
 
-app.use(logger);
+app.use(loggerMiddleware);
 
 app
   .use(koaBody({ multipart: true }))

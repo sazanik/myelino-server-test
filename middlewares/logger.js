@@ -1,8 +1,3 @@
-/**
- * Logs given arguments to the standard output
- *
- * @returns {undefined}
- */
 const log =  (...params) => {
   return console.log(new Date(), ...params)
 };
@@ -14,6 +9,6 @@ module.exports = async function logger(ctx, next) {
     await next();
   } finally {
     const duration = Date.now() - start;
-    log({ method: ctx.method, url: ctx.url, body: ctx.body ?? null, headers: ctx.headers, duration })
+    log({ method: ctx.method, url: ctx.url, body: ctx.request?.body, headers: ctx.headers, duration })
   }
 }

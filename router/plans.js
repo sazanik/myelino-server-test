@@ -1,13 +1,17 @@
 const Router = require('@koa/router');
 
-const { createPlan, deletePlan, readPlans } = require('../config/storage');
+const authMiddleware = require('../middlewares/auth');
+const { createPlan, deletePlan, readPlans } = require('../db/storage');
 
 const router = new Router({
   prefix: '/plans',
 });
 
+router.use(authMiddleware);
+
 router.get('/', async (ctx) => {
-  const userId = ctx.request.query.userId;
+  const userId = ctx.state.user.id;
+
   ctx.assert(userId, 400, 'userId is required');
 
   const plans = await readPlans(userId);
@@ -17,7 +21,7 @@ router.get('/', async (ctx) => {
 });
 
 router.get('/:id', async (ctx) => {
-  const userId = ctx.request.query.userId;
+  const userId = ctx.state.user.id;
   const id = ctx.params.id;
 
   ctx.assert(id, 400, 'id is required');
@@ -31,7 +35,6 @@ router.get('/:id', async (ctx) => {
 router.post('/', async (ctx) => {
   ctx.assert(ctx.request.body.name, 400, 'name is required');
   ctx.assert(ctx.request.body.userId, 400, 'userId is required');
-
 
   try {
     const createdPlan = await createPlan({ ...ctx.request.body });

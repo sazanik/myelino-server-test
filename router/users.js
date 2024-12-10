@@ -1,6 +1,6 @@
 const Router = require('@koa/router');
 
-const { createUser, readUser, deleteUser, findUserByUsernameOrEmail } = require('../config/storage');
+const { createUser, readUser, deleteUser, findUserByUsernameOrEmail } = require('../db/storage');
 
 const router = new Router({
   prefix: '/users',

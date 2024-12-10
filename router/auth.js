@@ -2,15 +2,13 @@ const Router = require('@koa/router');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const { findUserByUsernameOrEmail, createUser } = require('../config/storage');
-
-const SECRET_KEY = 'your_secret_key';
+const { findUserByUsernameOrEmail, createUser } = require('../db/storage');
+const { SECRET_KEY } = require('../constants/auth');
 
 const router = new Router({
   prefix: '/auth',
 });
 
-// Маршрут для логина
 router.post('/login', async (ctx) => {
   const { identifier, password } = ctx.request.body ?? {};
 
@@ -63,7 +61,21 @@ router.post('/register', async (ctx) => {
   );
 
   ctx.body = { token, user: createdUser };
+});
 
+router.post('/verify', async (ctx) => {
+  const { token } = ctx.request.body ?? {}
+  ctx.assert(token, 401, 'Token is required');
+
+  try {
+    const decodedUser = jwt.verify(token, SECRET_KEY);
+    const foundUser = await findUserByUsernameOrEmail(decodedUser.username);
+
+    ctx.body = foundUser ;
+  } catch (error) {
+    ctx.status = 401;
+    ctx.erro = 'Invalid or expired token';
+  }
 });
 
 module.exports = router;
