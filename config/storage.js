@@ -25,11 +25,12 @@ const ensureFileExists = async (filePath) => {
 };
 
 const setupFiles = async () => {
-  await ensureDataDir();
-
-  await ensureFileExists(USERS_FILE);
-  await ensureFileExists(PLANS_FILE);
-  await ensureFileExists(EVENTS_FILE);
+  Promise.all([
+    ensureDataDir(),
+    ensureFileExists(USERS_FILE),
+    ensureFileExists(PLANS_FILE),
+    ensureFileExists(EVENTS_FILE),
+  ]);
 };
 
 setupFiles().catch(() => {
@@ -51,30 +52,54 @@ const writeJsonFile = async (filePath, data) => {
 };
 
 // User Storage Operations
-const readUser = async id => {
+const readUser = async (id) => {
   const users = await readJsonFile(USERS_FILE);
   return users.find(user => user.id === id);
 };
 
-const findUserByUsernameOrEmail = async ({ username, email }) => {
+const findUserByUsernameOrEmail = async (identifier) => {
   const users = await readJsonFile(USERS_FILE);
-  return users.find(user => user.username === username || user.email === email);
+  return users.find(user => user.username === identifier || user.email === identifier);
 };
 
 const createUser = async user => {
-  const existingUser = await findUserByUsernameOrEmail({ username: user.username, email: user.email });
+  const [existingUserByEmail, existingUserByUsername] = await Promise.all([
+    findUserByUsernameOrEmail(user.email),
+    findUserByUsernameOrEmail(user.username)
+  ])
 
-  if (existingUser) {
-    throw new Error(JSON.stringify({ message: 'User with this username or email already exists' }));
+  if (existingUserByEmail) {
+    throw new Error('User with this email already exists');
+  }
+
+  if (existingUserByUsername) {
+    throw new Error('User with this username already exists');
   }
 
   const users = await readJsonFile(USERS_FILE);
-  const newUser = { ...user, id: users.length + 1 };
+  const newUser = { ...user, id: (users.length + 1).toString() };
 
   users.push(newUser);
   await writeJsonFile(USERS_FILE, users);
 
   return newUser;
+};
+
+const deleteUser = async (id) => {
+  const users = await readJsonFile(USERS_FILE);
+  const updatedUsers = users.filter(user => user.id !== id);
+
+  const plans = await readJsonFile(PLANS_FILE);
+  const filteredPlans = plans.filter(plan => plan.userId !== id);
+
+  const events = await readJsonFile(EVENTS_FILE);
+  const filteredEvents = events.filter(event => event.userId !== id);
+
+  Promise.all([
+    writeJsonFile(USERS_FILE, updatedUsers),
+    writeJsonFile(PLANS_FILE, filteredPlans),
+    writeJsonFile(EVENTS_FILE, filteredEvents),
+  ]);
 };
 
 // Plan Storage Operations
@@ -108,7 +133,14 @@ const deletePlan = async (id) => {
   const plans = await readJsonFile(PLANS_FILE);
   const filteredPlans = plans.filter(plan => plan.id !== id);
 
-  await writeJsonFile(PLANS_FILE, filteredPlans);
+  const events = await readJsonFile(EVENTS_FILE);
+  const filteredEvents = events.filter(event => event.planId !== id);
+
+  Promise.all([
+    writeJsonFile(PLANS_FILE, filteredPlans),
+    writeJsonFile(EVENTS_FILE, filteredEvents),
+  ]);
+
 };
 
 // Event Storage Operations
@@ -162,13 +194,15 @@ const deleteEvent = async id => {
 };
 
 module.exports = {
+  createUser,
+  readUser,
+  findUserByUsernameOrEmail,
+  deleteUser,
   createEvent,
   updateEvent,
   deleteEvent,
   createPlan,
   deletePlan,
-  createUser,
-  readUser,
   readPlans,
   readEvents,
 };

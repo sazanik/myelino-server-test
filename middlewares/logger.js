@@ -15,6 +15,6 @@ module.exports = async function logger(ctx, next) {
     await next();
   } finally {
     const duration = Date.now() - start;
-    log({ method: ctx.method, url: ctx.url, duration })
+    log({ method: ctx.method, url: ctx.url, body: ctx.body ?? null, duration })
   }
 }
