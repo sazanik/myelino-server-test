@@ -1,30 +1,48 @@
 const Router = require('@koa/router');
 
-const { createPlan, deletePlan } = require('../config/storage');
+const { createPlan, deletePlan, readPlans } = require('../config/storage');
 
 const router = new Router({
   prefix: '/plans',
 });
 
 router.get('/', async (ctx) => {
-// TODO: add handler
+  const userId = ctx.request.query.userId;
+  ctx.assert(userId, 400, 'userId is required');
+
+  const plans = await readPlans(userId);
+
+  ctx.status = 200;
+  ctx.body = plans;
 });
 
 router.get('/:id', async (ctx) => {
-  // TODO: add handler
+  const userId = ctx.request.query.userId;
+  const id = ctx.params.id;
+
+  ctx.assert(id, 400, 'id is required');
+  ctx.assert(userId, 400, 'userId is required');
+  const plans = await readPlans(userId, id);
+
+  ctx.status = 200;
+  ctx.body = plans;
 });
 
 router.post('/', async (ctx) => {
   ctx.assert(ctx.request.body.name, 400, 'name is required');
   ctx.assert(ctx.request.body.userId, 400, 'userId is required');
 
-  const newPlan = {
-    ...ctx.request.body,
-  };
 
-  await createPlan(newPlan);
+  try {
+    const createdPlan = await createPlan({ ...ctx.request.body });
 
-  ctx.status = 201;
+    ctx.body = createdPlan;
+    ctx.status = 201;
+  } catch (err) {
+    ctx.status = 409;
+    ctx.message = err.message;
+  }
+
 });
 
 router.delete('/:id', async (ctx) => {
@@ -33,6 +51,6 @@ router.delete('/:id', async (ctx) => {
   await deletePlan(id);
 
   ctx.status = 204;
-})
+});
 
 module.exports = router;

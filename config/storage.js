@@ -78,8 +78,13 @@ const createUser = async user => {
 };
 
 // Plan Storage Operations
-const readPlans = async userId => {
+const readPlans = async (userId, id) => {
   const plans = await readJsonFile(PLANS_FILE);
+
+  if (userId && id) {
+    return plans.find(plan => plan.userId === userId && plan.id === id);
+  }
+
   return plans.filter(plan => plan.userId === userId);
 };
 
@@ -89,7 +94,7 @@ const createPlan = async plan => {
   const existingPlan = plans.find(ePlan => ePlan.name === plan.name);
 
   if (existingPlan) {
-    throw new Error(JSON.stringify({ message: 'Plan with this name already exists' }));
+    throw new Error('Plan with this name already exists');
   }
 
   const newPlan = { ...plan, id: (plans.length + 1).toString() };
@@ -107,9 +112,14 @@ const deletePlan = async (id) => {
 };
 
 // Event Storage Operations
-const readEvents = async planId => {
-  const events = await readJsonFile < Event > (EVENTS_FILE);
-  return events.filter(event => event.planId === planId);
+const readEvents = async (userId, planId, id) => {
+  const events = await readJsonFile(EVENTS_FILE);
+
+  if (userId && planId && id) {
+    return events.find(event => userId === event.userId && event.planId === planId && event.id === id);
+  }
+
+  return events.filter(event => userId === event.userId && event.planId === planId);
 };
 
 const createEvent = async event => {
@@ -118,14 +128,31 @@ const createEvent = async event => {
   const existingEvent = events.find(eEvent => eEvent.name === event.name);
 
   if (existingEvent) {
-    throw new Error(JSON.stringify({ message: 'Event with this name already exists' }));
+    throw new Error('Event with this name already exists');
   }
 
-  const newEvent = { ...event, id: events.length + 1 };
+  const newEvent = { ...event, id: (events.length + 1).toString() };
   events.push(newEvent);
   await writeJsonFile(EVENTS_FILE, events);
 
   return newEvent;
+};
+
+const updateEvent = async (id, updatedData) => {
+  const events = await readJsonFile(EVENTS_FILE);
+  const eventIndex = events.findIndex(event => event.id === id);
+
+  if (eventIndex === -1) {
+    throw new Error('404: Event not found');
+  }
+
+  const updatedEvent = { ...events[eventIndex], ...updatedData };
+
+  events[eventIndex] = updatedEvent;
+
+  await writeJsonFile(EVENTS_FILE, events);
+
+  return updatedEvent;
 };
 
 const deleteEvent = async id => {
@@ -136,6 +163,7 @@ const deleteEvent = async id => {
 
 module.exports = {
   createEvent,
+  updateEvent,
   deleteEvent,
   createPlan,
   deletePlan,

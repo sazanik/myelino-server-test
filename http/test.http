@@ -1,15 +1,18 @@
 #PLANS
 
+### get plans
+GET {{base-url}}/plans?userId={{userId}}
+
 ### get plan
-GET {{base-url}}/plans/13?test=333
+GET {{base-url}}/plans/2?userId={{userId}}
 
 ### create plan
 POST {{base-url}}/plans
 Content-Type: application/json
 
 {
-  "userId": "userId",
-  "name": "Cafes and restaurants5"
+  "userId": "{{userId}}",
+  "name": "Created plan {{$random.integer(1, 99)}}"
 }
 
 ### delete plan
@@ -18,15 +21,37 @@ DELETE {{base-url}}/plans/4
 
 #EVENTS
 
+### get events
+GET {{base-url}}/plans/{{planId}}/events?userId={{userId}}
+
+### get event
+GET {{base-url}}/plans/{{planId}}/events/4?userId={{userId}}
+
 ### create event
-POST {{base-url}}/plans/2/events
+POST {{base-url}}/plans/{{planId}}/events
 Content-Type: application/json
 
 {
-  "userId": "userId",
-  "name": "Event {{$random.integer(1, 999)}}",
+  "userId": "{{userId}}",
+  "planId": "{{planId}}",
+  "name": "Event {{$random.integer(1, 9)}}",
   "dtStart": 1734993924602,
   "dtEnd": 1735166724608,
   "invitedPersonsCount": {{$random.integer(1, 99)}},
-  "cost": {{$randomInt}}
+  "cost": {{$random.integer(1, 99)}}
+}
+
+### update event
+PATCH {{base-url}}/plans/2/events/2
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "planId": "{{planId}}",
+  "name": "Updated Event {{$random.integer(1, 999)}}",
+  "dtStart": 1734993924602,
+  "dtEnd": 1735166724608,
+  "invitedPersonsCount": {{$random.integer(1, 99)}},
+  "cost": {{$random.integer(1, 99)}},
+  "imageUrl": "/Users/mikita/WebstormProjects/other/myelino-test-server/data/images/randomImage0.7348952827332607.jpg"
 }
