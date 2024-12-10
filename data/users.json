@@ -1,20 +1,8 @@
 [
   {
-    "username": "username6",
-    "email": "test8@gmail.com",
-    "password": "password",
+    "username": "username",
+    "email": "test@gmail.com",
+    "password": "$2b$10$NK4Mi2vhLBtHdRDucHM4xe9om15fVhAagOSES.3pcRGBbtYTOoCRC",
     "id": "1"
-  },
-  {
-    "username": "username4",
-    "email": "test6@gmail.com",
-    "password": "password",
-    "id": "2"
-  },
-  {
-    "username": "username8",
-    "email": "test1@gmail.com",
-    "password": "password",
-    "id": "3"
   }
 ]

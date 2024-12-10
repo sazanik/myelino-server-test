@@ -15,6 +15,28 @@ GET {{base-url}}/users/{{userId}}
 ### delete user
 DELETE {{base-url}}/users/{{userId}}
 
+#AUTH
+
+### login
+POST {{base-url}}/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "username",
+  "password": "password"
+}
+
+### register
+POST {{base-url}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "username",
+  "email": "test@gmail.com",
+  "password": "password"
+}
+
+###
 #PLANS
 
 ### get plans
