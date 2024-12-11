@@ -1,5 +1,7 @@
 const Koa = require('koa');
 const { koaBody } = require('koa-body');
+const serve = require('koa-static');
+const { resolve } = require('node:path');
 
 const usersRouter = require('./router/users');
 const authRouter = require('./router/auth');
@@ -9,6 +11,9 @@ const loggerMiddleware = require('./middlewares/logger');
 
 const app = new Koa();
 
+const staticDir = resolve(__dirname, './data/images');
+
+app.use(serve(staticDir));
 app.use(loggerMiddleware);
 
 app
