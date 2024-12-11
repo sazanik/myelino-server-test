@@ -148,6 +148,8 @@ const deletePlan = async (id) => {
 const readEvents = async (userId, planId, id) => {
   const events = await readJsonFile(EVENTS_FILE);
 
+  console.log(events);
+
   if (userId && planId && id) {
     return events.find(event => userId === event.userId && event.planId === planId && event.id === id);
   }

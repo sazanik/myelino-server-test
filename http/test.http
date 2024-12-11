@@ -5,8 +5,8 @@ POST {{base-url}}/users
 Content-Type: application/json
 
 {
-  "username": "username{{$random.integer(1, 9)}}",
-  "email": "test{{$random.integer(1, 9)}}@gmail.com",
+  "username": "username",
+  "email": "test@gmail.com",
   "password": "password"
 }
 
@@ -26,6 +26,9 @@ Content-Type: application/json
   "identifier": "username",
   "password": "password"
 }
+
+> {% client.global.set("authToken", response.body.token) %}
+
 
 ### register
 POST {{base-url}}/auth/register
@@ -50,6 +53,7 @@ GET {{base-url}}/plans/2?userId={{userId}}
 ### create plan
 POST {{base-url}}/plans
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
   "userId": "{{userId}}",
@@ -64,14 +68,17 @@ DELETE {{base-url}}/plans/2
 #EVENTS
 
 ### get events
-GET {{base-url}}/plans/{{planId}}/events?userId={{userId}}
+GET {{base-url}}/plans/{{planId}}/events
+Authorization: Bearer {{authToken}}
 
 ### get event
-GET {{base-url}}/plans/{{planId}}/events/4?userId={{userId}}
+GET {{base-url}}/plans/{{planId}}/events/1
+Authorization: Bearer {{authToken}}
 
 ### create event
 POST {{base-url}}/plans/{{planId}}/events
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
   "userId": "{{userId}}",

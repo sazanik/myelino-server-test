@@ -10,6 +10,8 @@ const router = new Router({
 });
 
 router.post('/login', async (ctx) => {
+  console.log('HERE');
+
   const { identifier, password } = ctx.request.body ?? {};
 
   const user = await findUserByUsernameOrEmail(identifier);
@@ -21,7 +23,11 @@ router.post('/login', async (ctx) => {
     return;
   }
 
+
+
   const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  console.log(isPasswordValid);
 
   if (!isPasswordValid) {
     ctx.status = 401;
